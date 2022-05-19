@@ -61,34 +61,37 @@ def allan_variance(imu, curent_user_id):
         "remove": True,
         "detach": True
     }
-    dm = DockerManager()
-    container = dm.start_container(docker_data)
-    sleep(3)
-    print(imu.data)
-    result = container.exec_run(cmd='bash -c "source /ros_entrypoint.sh && rosrun allan_variance_ros cookbag.py --input {} --output cooked.bag"'.format('/imu/' + imu.data), stream=False)
-    print("Step 1 Done")
-    print(result[0])
-    result = container.exec_run(cmd='bash -c "source /ros_entrypoint.sh && rosrun allan_variance_ros allan_variance / /imu/{}.yaml"'.format(imu.id), stream=False)
-    print("Step 2 Done")
-    print(result[0])
-    result = container.exec_run(cmd='bash -c "source /ros_entrypoint.sh && rosrun allan_variance_ros analysis.py --data allan_variance.csv"', stream=False)
-    print("Step 3 Done")
-    print(result[0])
-    result = container.exec_run(cmd='cp imu.yaml /imu/{}_imu.yaml'.format(imu.id), stream=False)
-    result = container.exec_run(cmd='cp acceleration.png /imu/{}_a.png'.format(imu.id), stream=False)
-    result = container.exec_run(cmd='cp gyro.png /imu/{}_g.png'.format(imu.id), stream=False)
-    print("Step 4 Done")
-    data = user_manager.extract_result_from_imu_yaml(user_id=curent_user_id, imu_id=imu.id)
-    a_noise = data['accelerometer_noise_density']
-    a_random_walk = data['accelerometer_random_walk']
-    g_noise = data['gyroscope_noise_density']
-    g_random_walk = data['gyroscope_random_walk']
-    imu.a_noise_density = a_noise
-    imu.a_random_walk = a_random_walk
-    imu.g_noise_density = g_noise
-    imu.g_random_walk = g_random_walk
-    db.session.add(imu)
-    db.session.commit()
+    try:
+        dm = DockerManager()
+        container = dm.start_container(docker_data)
+        sleep(3)
+        print(imu.data)
+        result = container.exec_run(cmd='bash -c "source /ros_entrypoint.sh && rosrun allan_variance_ros cookbag.py --input {} --output cooked.bag"'.format('/imu/' + imu.data), stream=False)
+        print("Step 1 Done")
+        print(result[0])
+        result = container.exec_run(cmd='bash -c "source /ros_entrypoint.sh && rosrun allan_variance_ros allan_variance / /imu/{}.yaml"'.format(imu.id), stream=False)
+        print("Step 2 Done")
+        print(result[0])
+        result = container.exec_run(cmd='bash -c "source /ros_entrypoint.sh && rosrun allan_variance_ros analysis.py --data allan_variance.csv"', stream=False)
+        print("Step 3 Done")
+        print(result[0])
+        result = container.exec_run(cmd='cp imu.yaml /imu/{}_imu.yaml'.format(imu.id), stream=False)
+        result = container.exec_run(cmd='cp acceleration.png /imu/{}_a.png'.format(imu.id), stream=False)
+        result = container.exec_run(cmd='cp gyro.png /imu/{}_g.png'.format(imu.id), stream=False)
+        print("Step 4 Done")
+        data = user_manager.extract_result_from_imu_yaml(user_id=curent_user_id, imu_id=imu.id)
+        a_noise = data['accelerometer_noise_density']
+        a_random_walk = data['accelerometer_random_walk']
+        g_noise = data['gyroscope_noise_density']
+        g_random_walk = data['gyroscope_random_walk']
+        imu.a_noise_density = a_noise
+        imu.a_random_walk = a_random_walk
+        imu.g_noise_density = g_noise
+        imu.g_random_walk = g_random_walk
+        db.session.add(imu)
+        db.session.commit()
+    except BaseException as e:
+        print("cali error: {}".format(e))
     
 
 
