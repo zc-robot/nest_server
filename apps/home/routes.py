@@ -109,8 +109,7 @@ def upload_file(imu_id):
 @blueprint.route('/index')
 @login_required
 def index():
-
-    return render_template('home/imu-calibration.html', segment='index')
+    return render_template('home/imu-calibration.html', segment='imu-calibration.html')
 
 @blueprint.post('/<int:imu_id>/delete_imu/')
 @login_required

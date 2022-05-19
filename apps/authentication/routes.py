@@ -51,7 +51,7 @@ def login():
     if not current_user.is_authenticated:
         return render_template('accounts/login.html',
                                form=login_form)
-    return redirect(url_for('home_blueprint.index'))
+    return redirect(url_for('home_blueprint.route_template', template='imu-calibration.html'))
 
 
 @blueprint.route('/register', methods=['GET', 'POST'])
@@ -84,7 +84,7 @@ def register():
         db.session.commit()
         user_manager.create_folder(user.id)
         login_user(user)
-        return redirect(url_for('home_blueprint.index'))
+        redirect(url_for('home_blueprint.route_template', template='imu-calibration.html'))
 
     else:
         return render_template('accounts/register.html', form=create_account_form)
