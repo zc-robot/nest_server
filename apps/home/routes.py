@@ -129,6 +129,8 @@ def route_template(template):
 
         if not template.endswith('.html'):
             template += '.html'
+        print("11111111111111")
+        print(template)
 
         # Detect the current page
         segment = get_segment(request)
@@ -144,6 +146,7 @@ def route_template(template):
                 db.session.commit()
                 user_manager.generate_imu_yaml(imu_id=new_imu.id, imu_rate=imu_rate, ros_topic=ros_topic, sequence_time=duration, user_id=current_user.id)
             imus = IMU.query.filter(IMU.user_id == current_user.id).all()
+            print(2)
             return render_template("home/" + template, segment=segment, imus=imus)
 
         # Serve the file (if exists) from app/templates/home/FILE.html

@@ -84,7 +84,7 @@ def register():
         db.session.commit()
         user_manager.create_folder(user.id)
         login_user(user)
-        redirect(url_for('home_blueprint.route_template', template='imu-calibration.html'))
+        return redirect(url_for('home_blueprint.route_template', template='imu-calibration.html'))
 
     else:
         return render_template('accounts/register.html', form=create_account_form)

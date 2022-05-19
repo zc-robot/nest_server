@@ -14,6 +14,7 @@ import ruamel.yaml
 class UserManager:
     def __init__(self) -> None:
         self.fold_path = None
+        self.util_path = None
         self.yaml = ruamel.yaml.YAML()
         self.yaml.preserve_quotes = True
 
@@ -30,7 +31,7 @@ class UserManager:
         file.save(path + file_name)
     
     def generate_imu_yaml(self, user_id, imu_id, imu_rate, ros_topic, sequence_time):
-        template_path = self.fold_path + '/util/imu_cali_template.yaml'
+        template_path = self.util_path + '/imu_cali_template.yaml'
         with open(template_path) as f:
             file = f.read()
         file = self.yaml.load(file)
@@ -60,7 +61,7 @@ login_manager = LoginManager()
 user_manager = UserManager()
 def create_user_manager(app):
     user_manager.fold_path = app.config['USER_FOLDER']
-
+    user_manager.util_path = app.config['UTIL_FOLDER']
 def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
